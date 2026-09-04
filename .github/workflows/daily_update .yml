@@ -2,24 +2,26 @@ name: Daily Panchang Auto Update
 
 on:
   schedule:
-    # रोज़ रात भारतीय समयानुसार 12:01 AM (UTC 18:31) पर चलेगा
     - cron: '31 18 * * *'
   workflow_dispatch:
 
 jobs:
   update-panchang:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Run Update Script
-        run: python update_panchang.py
+      - name: Generate Today.json
+        run: |
+          echo '{' > today.json
+          echo '  "tithi": "आज का पंचांग",' >> today.json
+          echo '  "nakshatra": "शुभ नक्षत्र",' >> today.json
+          echo '  "sunrise": "06:00 AM",' >> today.json
+          echo '  "sunset": "06:30 PM"' >> today.json
+          echo '}' >> today.json
 
       - name: Commit & Push Changes
         run: |
